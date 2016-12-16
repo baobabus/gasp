@@ -66,7 +66,7 @@ func main() {
 
 	e4 := i4.As().(Employee) // *employee
 	n4 := e4.As().(Person).Name() // "Daphne"
-	p4 := e4.As().(Person) // *chessPlayer
+	p4 := e4.As().(Person) // *person
 	cr4 := p4.As().(ChessPlayer).Rank() // 7
 
 	// Shut up the compiler
