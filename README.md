@@ -46,14 +46,17 @@ type employee struct {
 	rank string
 }
 
-var (
-	i1 = aspect.NewEntity(&person{name: "Bob"})
-	i2 = aspect.NewEntity(&person{name: "Carl"}, &chessPlayer{rank: 5})
-	i3 = aspect.NewEntity(&person{name: "Sophie"}, &employee{rank: "executive"})
-	i4 = aspect.NewEntity(&person{name: "Daphne"}, &employee{rank: "director"}, &chessPlayer{rank: 7})
-)
-
 func main() {
+	i1 := aspect.NewEntity(&person{name: "Bob"})
+	i2 := aspect.NewEntity(&person{name: "Carl"}, &chessPlayer{rank: 5})
+	i3 := aspect.NewEntity(&person{name: "Sophie"}, &employee{rank: "executive"})
+	i4 := aspect.NewEntity(&person{name: "Daphne"}, &employee{rank: "director"}, &chessPlayer{rank: 7})
+
+	// Note: below short-hand assertions require following go runtime modification:
+	// https://github.com/baobabus/go/commit/d00756440a439571a51d85c0ec3298cafd57f80a
+	//
+	// Without those the assertions will need to be written as:
+	// p1 := i1.As((*Person)(nil)).(Person) // *person
 
 	p1 := i1.As().(Person) // *person
 	n1 := i1.As().(Person).Name() // "Bob"
@@ -64,13 +67,16 @@ func main() {
 	n2 := c2.As().(Person).Name() // "Carl"
 	e2, ok := c2.As().(Employee) // nil, false
 
+	er3 := i3.As().(Employee).Rank() // "executive"
+
 	e4 := i4.As().(Employee) // *employee
 	n4 := e4.As().(Person).Name() // "Daphne"
 	p4 := e4.As().(Person) // *person
 	cr4 := p4.As().(ChessPlayer).Rank() // 7
+	er4 := p4.As().(Employee).Rank() // "director"
 
 	// Shut up the compiler
-	foo := []interface{}{p1, n1, c1, c2, cr2, n2, e2, e4, n4, p4, cr4, ok}
+	foo := []interface{}{p1, n1, c1, c2, cr2, n2, e2, er3, e4, n4, p4, cr4, er4, ok}
 	fmt.Printf("%v\n", foo)
 }
 
